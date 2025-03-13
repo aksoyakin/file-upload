@@ -1,11 +1,13 @@
 import { promises as fsPromises } from 'fs';
+import path from 'path';
 import * as fileRepository from '../repositories/fileRepository.js';
 import * as storageConfig from '../config/storage.js';
 import { logger } from '../utils/logger.js';
 
 export const saveFile = async (file) => {
     try {
-        const fileUrl = `${storageConfig.baseUrl}/uploads/${file.filename}`;
+        // Dosyanın URL'ini oluştur (parametreler klasör yapısını içerecek şekilde)
+        const fileUrl = `${storageConfig.baseUrl}/uploads/${file.relativePath}`;
 
         const fileData = {
             originalName: file.originalname,
@@ -13,11 +15,18 @@ export const saveFile = async (file) => {
             path: file.path,
             url: fileUrl,
             size: file.size,
-            mimeType: file.mimetype
+            mimeType: file.mimetype,
+            // Ek bilgileri kaydet
+            directory: file.relativeDirectory || '',
+            relativePath: file.relativePath || '',
+            // Parametre bilgileri
+            modul: file.modul || '',
+            firmaGuid: file.firmaGuid || '',
+            fisTurId: file.fisTurId || ''
         };
 
         const savedFile = await fileRepository.create(fileData);
-        logger.info(`Dosya başarıyla kaydedildi: ${file.filename}`);
+        logger.info(`Dosya başarıyla kaydedildi: ${file.filename}, Klasör: ${file.relativeDirectory}`);
 
         return savedFile;
     } catch (error) {

@@ -4,9 +4,16 @@ import { responseFormatter } from '../utils/responseFormatter.js';
 
 export const uploadFile = asyncHandler(async (req, res) => {
     const file = req.file;
+    const { modul, firmaGuid, fisTurId } = req.body;
+
     if (!file) {
         return res.status(400).json(responseFormatter.error('Dosya bulunamadı'));
     }
+
+    // Parametre bilgilerini dosya nesnesine ekle
+    file.modul = modul;
+    file.firmaGuid = firmaGuid;
+    file.fisTurId = fisTurId;
 
     const result = await uploadService.saveFile(file);
     res.status(201).json(responseFormatter.success(result));

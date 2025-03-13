@@ -24,6 +24,28 @@ const fileSchema = new mongoose.Schema({
     mimeType: {
         type: String,
         required: true
+    },
+    // Yeni alanlar
+    directory: {
+        type: String,
+        default: ''
+    },
+    relativePath: {
+        type: String,
+        default: ''
+    },
+    // Parametre bilgileri
+    modul: {
+        type: String,
+        default: ''
+    },
+    firmaGuid: {
+        type: String,
+        default: ''
+    },
+    fisTurId: {
+        type: String,
+        default: ''
     }
 }, {
     timestamps: true
