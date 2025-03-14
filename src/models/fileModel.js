@@ -44,7 +44,11 @@ const fileSchema = new mongoose.Schema({
     fisTurId: {
         type: String,
         default: ''
-    }
+    },
+    satirGuid: {
+        type: String,
+        default: ''
+    },
 }, {
     timestamps: true
 });

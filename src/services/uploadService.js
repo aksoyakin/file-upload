@@ -19,7 +19,8 @@ export const saveFile = async (file) => {
             relativePath: file.relativePath || '',
             modul: file.modul || '',
             firmaGuid: file.firmaGuid || '',
-            fisTurId: file.fisTurId || ''
+            fisTurId: file.fisTurId || '',
+            satirGuid: file.satirGuid || ''
         };
 
         const savedFile = await fileRepository.create(fileData);

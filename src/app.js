@@ -24,12 +24,12 @@ app.get('/', (req, res) => {
     res.json({
         message: 'PDF Yükleme API Servisi',
         endpoints: {
-            uploadFile: 'POST /api/uploads (parametreler: modul, firmaGuid, fisTurId ve file)',
+            uploadFile: 'POST /api/uploads (parametreler: modul, firmaGuid, fisTurId, satirGuid ve file)',
             getAllFiles: 'GET /api/uploads',
             getFileById: 'GET /api/uploads/:id',
             deleteFile: 'DELETE /api/uploads/:id'
         },
-        description: 'Bu API, PDF dosyalarını yüklemek için kullanılır. Dosyalar belirtilen modül, firma ve fiş türüne göre klasörlendirilir.'
+        description: 'Bu API, PDF dosyalarını yüklemek için kullanılır. Dosyalar belirtilen modül, firma ve fiş türüne göre klasörlendirilir ve satirGuid dosya adı olarak kullanılır.'
     });
 });
 

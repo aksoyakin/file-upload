@@ -43,10 +43,10 @@ export const validatePdfFile = (req, res, next) => {
         storage: multer.diskStorage({
             destination: function(req, file, cb) {
                 logger.info(`Dosya bilgileri: ${file.originalname}, ${file.mimetype}`);
-
                 cb(null, storageConfig.storagePath);
             },
             filename: function(req, file, cb) {
+                // Filename will be set later using satirGuid
                 const uniqueFilename = `${uuidv4()}${path.extname(file.originalname)}`;
                 cb(null, uniqueFilename);
             }
@@ -75,8 +75,8 @@ export const validatePdfFile = (req, res, next) => {
             return res.status(400).json(responseFormatter.error('Dosya bulunamadı. Lütfen "file" alanıyla bir PDF dosyası gönderin.'));
         }
 
-        const { modul, firmaGuid, fisTurId } = req.body;
-        logger.info(`Form parametreleri: modul=${modul}, firmaGuid=${firmaGuid}, fisTurId=${fisTurId}`);
+        const { modul, firmaGuid, fisTurId, satirGuid } = req.body;
+        logger.info(`Form parametreleri: modul=${modul}, firmaGuid=${firmaGuid}, fisTurId=${fisTurId}, satirGuid=${satirGuid}`);
 
         if (!modul || !firmaGuid || !fisTurId) {
             try {
@@ -88,24 +88,40 @@ export const validatePdfFile = (req, res, next) => {
             return res.status(400).json(responseFormatter.error('Eksik parametreler: modul, firmaGuid ve fisTurId parametreleri gereklidir'));
         }
 
+        if (!satirGuid) {
+            try {
+                fs.unlinkSync(req.file.path);
+            } catch (error) {
+                logger.error(`Dosya silme hatası: ${error.message}`);
+            }
+
+            return res.status(400).json(responseFormatter.error('Eksik parametre: satirGuid parametresi gereklidir'));
+        }
+
         try {
             const targetPath = createFolderStructure(modul, firmaGuid, fisTurId);
 
-            const targetFilePath = path.join(targetPath, req.file.filename);
+            // Use satirGuid as the filename with original extension
+            const fileExtension = path.extname(req.file.originalname);
+            const newFilename = `${satirGuid}${fileExtension}`;
+            const targetFilePath = path.join(targetPath, newFilename);
 
             fs.renameSync(req.file.path, targetFilePath);
 
             const relativeDirectory = path.join(modul, firmaGuid, fisTurId);
-            const relativePath = path.join(relativeDirectory, req.file.filename);
+            const relativePath = path.join(relativeDirectory, newFilename);
 
+            // Update file properties with new values
             req.file.path = targetFilePath;
+            req.file.filename = newFilename;
             req.file.relativeDirectory = relativeDirectory;
             req.file.relativePath = relativePath;
             req.file.modul = modul;
             req.file.firmaGuid = firmaGuid;
             req.file.fisTurId = fisTurId;
+            req.file.satirGuid = satirGuid;
 
-            logger.info(`Dosya başarıyla yüklendi: ${req.file.filename}, Klasör: ${relativeDirectory}`);
+            logger.info(`Dosya başarıyla yüklendi: ${newFilename}, Klasör: ${relativeDirectory}`);
 
             next();
         } catch (error) {
