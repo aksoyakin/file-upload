@@ -6,7 +6,6 @@ import { logger } from '../utils/logger.js';
 
 export const saveFile = async (file) => {
     try {
-        // Dosyanın URL'ini oluştur (parametreler klasör yapısını içerecek şekilde)
         const fileUrl = `${storageConfig.baseUrl}/uploads/${file.relativePath}`;
 
         const fileData = {
@@ -16,10 +15,8 @@ export const saveFile = async (file) => {
             url: fileUrl,
             size: file.size,
             mimeType: file.mimetype,
-            // Ek bilgileri kaydet
             directory: file.relativeDirectory || '',
             relativePath: file.relativePath || '',
-            // Parametre bilgileri
             modul: file.modul || '',
             firmaGuid: file.firmaGuid || '',
             fisTurId: file.fisTurId || ''

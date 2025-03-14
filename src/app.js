@@ -3,20 +3,23 @@ import { connectDB } from './config/database.js';
 import routes from './routes/index.js';
 import errorHandler from './middlewares/errorHandler.js';
 import { logger } from './utils/logger.js';
+import cors from 'cors';
 
 const app = express();
 
-// Connect to database
 connectDB();
 
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors({
+    origin: '*', // Herhangi bir domain'e izin verir
+    methods: ['GET', 'POST', 'DELETE'],
+    allowedHeaders: ['Content-Type']
+}));
 
-// Static files - uploads dizinindeki tüm dosyaları erişilebilir yap
 app.use('/uploads', express.static('uploads'));
 
-// Ana dizin route'u
 app.get('/', (req, res) => {
     res.json({
         message: 'PDF Yükleme API Servisi',
@@ -30,10 +33,8 @@ app.get('/', (req, res) => {
     });
 });
 
-// API Routes
 app.use('/api', routes);
 
-// Error handler
 app.use(errorHandler);
 
 export default app;

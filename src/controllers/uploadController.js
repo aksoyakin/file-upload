@@ -10,7 +10,6 @@ export const uploadFile = asyncHandler(async (req, res) => {
         return res.status(400).json(responseFormatter.error('Dosya bulunamadı'));
     }
 
-    // Parametre bilgilerini dosya nesnesine ekle
     file.modul = modul;
     file.firmaGuid = firmaGuid;
     file.fisTurId = fisTurId;

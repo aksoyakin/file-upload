@@ -25,7 +25,6 @@ const fileSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    // Yeni alanlar
     directory: {
         type: String,
         default: ''
@@ -34,7 +33,6 @@ const fileSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
-    // Parametre bilgileri
     modul: {
         type: String,
         default: ''
