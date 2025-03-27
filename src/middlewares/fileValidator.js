@@ -38,7 +38,7 @@ const createFolderStructure = (modul, firmaGuid, fisTurId) => {
     return fisTurPath;
 };
 
-export const validatePdfFile = (req, res, next) => {
+export const validateFile  = (req, res, next) => {
     const upload = multer({
         storage: multer.diskStorage({
             destination: function(req, file, cb) {
@@ -52,13 +52,22 @@ export const validatePdfFile = (req, res, next) => {
             }
         }),
         limits: {
-            fileSize: 10 * 1024 * 1024 // 10MB
+            fileSize: 100 * 1024 * 1024 // 100MB
         },
         fileFilter: function(req, file, cb) {
-            if (file.mimetype === 'application/pdf') {
+            // Kabul edilen dosya tipleri: PDF, SVG, PNG, JPG, JPEG
+            const allowedMimeTypes = [
+                'application/pdf',
+                'image/svg+xml',
+                'image/png',
+                'image/jpeg',
+                'image/jpg'
+            ];
+
+            if (allowedMimeTypes.includes(file.mimetype)) {
                 cb(null, true);
             } else {
-                cb(new Error('Sadece PDF dosyaları kabul edilmektedir'), false);
+                cb(new Error('Sadece PDF, SVG, PNG, JPG ve JPEG dosyaları kabul edilmektedir'), false);
             }
         }
     }).single('file');
@@ -66,13 +75,13 @@ export const validatePdfFile = (req, res, next) => {
     upload(req, res, async function(err) {
         if (err) {
             if (err.code === 'LIMIT_FILE_SIZE') {
-                return res.status(400).json(responseFormatter.error('Dosya boyutu 10MB\'dan büyük olamaz'));
+                return res.status(400).json(responseFormatter.error('Dosya boyutu 100MB\'dan büyük olamaz'));
             }
             return res.status(400).json(responseFormatter.error(err.message));
         }
 
         if (!req.file) {
-            return res.status(400).json(responseFormatter.error('Dosya bulunamadı. Lütfen "file" alanıyla bir PDF dosyası gönderin.'));
+            return res.status(400).json(responseFormatter.error('Dosya bulunamadı. Lütfen "file" alanıyla geçerli bir dosya gönderin.'));
         }
 
         const { modul, firmaGuid, fisTurId, satirGuid } = req.body;
