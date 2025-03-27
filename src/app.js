@@ -15,8 +15,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors({
     origin: '*', // Herhangi bir domain'e izin verir
     methods: ['GET', 'POST', 'DELETE'],
-    allowedHeaders: ['Content-Type']
+    allowedHeaders: ['Content-Type', 'Authorization', 'User-Agent', 'X-Requested-With']
 }));
+
+app.options('*', function(req, res) {
+  res.sendStatus(200);
+});
 
 app.use('/uploads', express.static('uploads'));
 
